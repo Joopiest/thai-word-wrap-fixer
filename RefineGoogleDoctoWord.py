@@ -101,7 +101,10 @@ st.markdown("""
 # Sidebar Section
 with st.sidebar:
     st.write("📊 สถิติการใช้งาน")
-    st.image(HITS_BADGE_URL) # สั่งให้แสดงรูปภาพตัวนับตรงนี้ครับ
+    
+    # ลบ st.image บรรทัดเดิมทิ้ง แล้วเปลี่ยนมาใช้ st.markdown บรรทัดนี้แทนครับ 👇
+    st.markdown(f"![Visitors]({HITS_BADGE_URL})") 
+    
     st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
     st.caption("พัฒนาเพื่อสาธารณประโยชน์")
 
