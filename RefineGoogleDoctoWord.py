@@ -146,7 +146,7 @@ st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้
 current_year = datetime.date.today().year
 
 # แก้ไขข้อความ Footer ให้ใช้ตัวแปร current_year
-st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap & Font Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน</div>", unsafe_allow_html=True)
 
 
 ### วิธีการดูสถิติแบบละเอียด (Daily, Monthly, Yearly):
