@@ -141,7 +141,7 @@ if uploaded_file is not None:
 
 # Disclaimer Section
 st.divider()
-st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไฟล์ที่แก้ไขแล้วจะถูกสร้างขึ้นมาใหม่โดยไม่มีผลกระทบกับไฟล์ต้นฉบับของท่าน  มีข้อสงสัยสอบถามได้ที่ joopiest@gmail.com")
+st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ไฟล์ที่แก้ไขแล้วจะถูกสร้างขึ้นมาใหม่โดยไม่มีผลกระทบกับไฟล์ต้นฉบับของท่าน  มีข้อสงสัยสอบถามได้ที่ joopiest@gmail.com")
 
 # Footer ดึงปีปัจจุบันมาเก็บไว้ในตัวแปร current_year
 current_year = datetime.date.today().year
