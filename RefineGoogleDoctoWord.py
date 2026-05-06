@@ -1,8 +1,8 @@
-import datetime  # เพิ่มบรรทัดนี้ไว้บนสุดกับพวก import อื่นๆ
 import streamlit as st
 import io
 import re
 import zipfile
+import datetime
 from lxml import etree
 from pythainlp.tokenize import word_tokenize
 
@@ -20,17 +20,15 @@ XML_NS = "http://www.w3.org/XML/1998/namespace"
 THAI_RE = re.compile("[\u0e00-\u0e7f]")
 MIXED_RE = re.compile("([\u0e00-\u0e7f]+)")
 
-# สำหรับระบบ Logbook (Hits Counter Badge)
-# แทนที่ 'joopiest/thai-word-wrap-fixer' ด้วยชื่อ repository จริงของคุณจู๊ป
-# แก้ไขบรรทัดที่ 18 เป็นตัวนี้ครับ
-HITS_BADGE_URL = "https://komarev.com/ghpvc/?username=joopiest&repo=thai-word-wrap-fixer&label=Visitors&color=green&style=flat"
+# ใช้ Badge แบบ Text ที่เสถียร 100%
+HITS_BADGE_URL = "https://img.shields.io/badge/Visitors-Live-green"
 
 def q(tag): return f"{{{W_NS}}}{tag}"
 
 # --- 3. Core Logic Functions ---
 def fix_thai_text(text):
     if not THAI_RE.search(text): return text
-    parts = MIXED_RE.split(text)
+    parts = MIXEDRE.split(text)
     out = []
     for part in parts:
         if part and all('\u0e00' <= ch <= '\u0e7f' for ch in part):
@@ -92,7 +90,7 @@ def patch_styles_bytes(xml_bytes):
 st.markdown("""
     <style>
     .main { background-color: #f8fafc; }
-    .stFileUploadDropzone { border: 2px dashed #4CAF50 !important; border-radius: 15px !important; }
+    [data-testid="stFileUploadDropzone"] { border: 2px dashed #4CAF50 !important; border-radius: 15px !important; padding: 50px !important; }
     .footer { font-size: 14px; color: #64748b; text-align: center; margin-top: 50px; }
     .credit { font-weight: bold; color: #2e7d32; }
     </style>
@@ -100,12 +98,15 @@ st.markdown("""
 
 # --- 5. UI Layout ---
 
+# Sidebar Section
+with st.sidebar:
+    st.write("📊 สถิติการใช้งาน")
+    st.image(HITS_BADGE_URL)
+    st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
+
 # Header Section with Credit
 st.title("📝 Thai Word Wrap & Font Fixer")
 st.markdown(f"พัฒนาโดย: **<span class='credit'>Joopiest Udomsaph</span>**", unsafe_allow_html=True)
-
-# Logbook / Analytics Badge (แสดงจำนวนคนเข้าใช้)
-st.markdown(f"[![Visitors]({HITS_BADGE_URL})](https://hits.dwyl.com)")
 
 st.write("เครื่องมือช่วยแก้ปัญหาภาษาไทยตัดคำผิดและฟอนต์ไม่มาตรฐานจาก Google Docs")
 
@@ -136,6 +137,8 @@ if uploaded_file is not None:
             )
         except Exception as e:
             st.error(f"เกิดข้อผิดพลาด: {e}")
+
+
 
 # Disclaimer Section
 st.divider()
