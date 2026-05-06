@@ -139,14 +139,14 @@ if uploaded_file is not None:
 
 # Disclaimer Section
 st.divider()
-st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไม่รับผิดชอบต่อความเสียหาย สูญหาย หรือความผิดพลาดของข้อมูลใดๆ ที่อาจเกิดขึ้นจากการใช้งานซอฟต์แวร์นี้ในทุกกรณี")
+st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไฟล์ที่แก้ไขแล้วจะถูกสร้างขึ้นมาให้โดยไม่มีผลกระทบกับไฟล์ต้นฉบับของท่าน สอบถามได้ที่ joopiest@gmail.com")
 
 # Footer
 # ดึงปีปัจจุบันมาเก็บไว้ในตัวแปร current_year
 current_year = datetime.date.today().year
 
 # แก้ไขข้อความ Footer ให้ใช้ตัวแปร current_year
-st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap & Font Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน</div>", unsafe_allow_html=True)
+st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap & Font Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน </div>", unsafe_allow_html=True)
 
 
 ### วิธีการดูสถิติแบบละเอียด (Daily, Monthly, Yearly):
