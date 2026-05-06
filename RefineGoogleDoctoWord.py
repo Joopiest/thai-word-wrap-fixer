@@ -1,3 +1,4 @@
+import datetime  # เพิ่มบรรทัดนี้ไว้บนสุดกับพวก import อื่นๆ
 import streamlit as st
 import io
 import re
@@ -141,7 +142,11 @@ st.divider()
 st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไม่รับผิดชอบต่อความเสียหาย สูญหาย หรือความผิดพลาดของข้อมูลใดๆ ที่อาจเกิดขึ้นจากการใช้งานซอฟต์แวร์นี้ในทุกกรณี")
 
 # Footer
-st.markdown("<div class='footer'>© 2024 Thai Word Wrap Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน</div>", unsafe_allow_html=True)
+# ดึงปีปัจจุบันมาเก็บไว้ในตัวแปร current_year
+current_year = datetime.date.today().year
+
+# แก้ไขข้อความ Footer ให้ใช้ตัวแปร current_year
+st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน</div>", unsafe_allow_html=True)
 
 
 ### วิธีการดูสถิติแบบละเอียด (Daily, Monthly, Yearly):
