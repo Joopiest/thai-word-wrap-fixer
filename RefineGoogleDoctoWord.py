@@ -102,8 +102,9 @@ st.markdown("""
 with st.sidebar:
     st.write("📊 สถิติการใช้งาน")
     
-    # ลบ st.image บรรทัดเดิมทิ้ง แล้วเปลี่ยนมาใช้ st.markdown บรรทัดนี้แทนครับ 👇
-    st.markdown(f"![Visitors]({HITS_BADGE_URL})") 
+    # ใช้ HTML บังคับแสดงรูปภาพไปเลยครับ
+    st.markdown(f'<img src="{HITS_BADGE_URL}" style="max-width: 100%;">', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True) # เว้นระยะห่างนิดนึง
     
     st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
     st.caption("พัฒนาเพื่อสาธารณประโยชน์")
