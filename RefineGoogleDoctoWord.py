@@ -21,7 +21,8 @@ MIXED_RE = re.compile("([\u0e00-\u0e7f]+)")
 
 # สำหรับระบบ Logbook (Hits Counter Badge)
 # แทนที่ 'joopiest/thai-word-wrap-fixer' ด้วยชื่อ repository จริงของคุณจู๊ป
-HITS_BADGE_URL = f"https://hits.dwyl.com/joopiest/thai-word-wrap-fixer.svg"
+# แก้ไขบรรทัดที่ 18 เป็นตัวนี้ครับ
+HITS_BADGE_URL = "https://komarev.com/ghpvc/?username=joopiest&repo=thai-word-wrap-fixer&label=Visitors&color=green&style=flat"
 
 def q(tag): return f"{{{W_NS}}}{tag}"
 
