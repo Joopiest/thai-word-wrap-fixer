@@ -20,6 +20,9 @@ XML_NS = "http://www.w3.org/XML/1998/namespace"
 THAI_RE = re.compile("[\u0e00-\u0e7f]")
 MIXED_RE = re.compile("([\u0e00-\u0e7f]+)")
 
+# ตัวแปรสำหรับดึงภาพตัวนับ Visitors มาแสดง
+HITS_BADGE_URL = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fjoopiest%2Fthai-word-wrap-fixer&count_bg=%232E7D32&title_bg=%23555555&title=Visitors&edge_flat=true"
+
 def q(tag): return f"{{{W_NS}}}{tag}"
 
 # --- 3. Core Logic Functions ---
@@ -98,6 +101,7 @@ st.markdown("""
 # Sidebar Section
 with st.sidebar:
     st.write("📊 สถิติการใช้งาน")
+    st.image(HITS_BADGE_URL) # สั่งให้แสดงรูปภาพตัวนับตรงนี้ครับ
     st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
     st.caption("พัฒนาเพื่อสาธารณประโยชน์")
 
@@ -144,12 +148,3 @@ current_year = datetime.date.today().year
 
 # แก้ไขข้อความ Footer ให้ใช้ตัวแปร current_year
 st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap & Font Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน </div>", unsafe_allow_html=True)
-
-### วิธีการดูสถิติแบบละเอียด (Daily, Monthly, Yearly):
-# นอกเหนือจากตัวเลขบนหน้าเว็บ คุณจู๊ปสามารถเข้าไปดูสถิติเชิงลึกได้ที่หน้าจัดการของ Streamlit ครับ:
-# 1. ไปที่ [share.streamlit.io](https://share.streamlit.io/)
-# 2. คลิกที่จุดสามจุด **(...)** ข้างๆ ชื่อแอปของคุณจู๊ป
-# 3. เลือกเมนู **"Analytics"**
-# 4. คุณจู๊ปจะเห็นกราฟแสดงจำนวนคนเข้าชม รายวัน รายสัปดาห์ และรายเดือน อย่างละเอียดและแม่นยำที่สุดครับ
-
-# เครื่องมือนี้อัปเกรดเรียบร้อยแล้ว! ลองนำไปใช้และแบ่งปันให้เพื่อนๆ ได้เลยครับ หากมีตรงไหนอยากให้ปรับเพิ่มบอกผมได้ทันทีครับ
