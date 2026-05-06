@@ -20,8 +20,8 @@ XML_NS = "http://www.w3.org/XML/1998/namespace"
 THAI_RE = re.compile("[\u0e00-\u0e7f]")
 MIXED_RE = re.compile("([\u0e00-\u0e7f]+)")
 
-# ตัวแปรสำหรับดึงภาพตัวนับ Visitors มาแสดง
-HITS_BADGE_URL = "https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fjoopiest%2Fthai-word-wrap-fixer&count_bg=%232E7D32&title_bg=%23555555&title=Visitors&edge_flat=true"
+# เปลี่ยนมาใช้ Provider ที่ไม่บล็อก Streamlit
+HITS_BADGE_URL = "https://api.visitorbadge.io/api/visitors?path=joopiest.thai-word-wrap-fixer&label=Visitors&countColor=%232e7d32"
 
 def q(tag): return f"{{{W_NS}}}{tag}"
 
@@ -102,9 +102,8 @@ st.markdown("""
 with st.sidebar:
     st.write("📊 สถิติการใช้งาน")
     
-    # ใช้ HTML บังคับแสดงรูปภาพไปเลยครับ
-    st.markdown(f'<img src="{HITS_BADGE_URL}" style="max-width: 100%;">', unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True) # เว้นระยะห่างนิดนึง
+    # ดึงรูปภาพตัวนับมาแสดง
+    st.image(HITS_BADGE_URL)
     
     st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
     st.caption("พัฒนาเพื่อสาธารณประโยชน์")
