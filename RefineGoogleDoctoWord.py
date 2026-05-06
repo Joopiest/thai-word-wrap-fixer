@@ -20,15 +20,12 @@ XML_NS = "http://www.w3.org/XML/1998/namespace"
 THAI_RE = re.compile("[\u0e00-\u0e7f]")
 MIXED_RE = re.compile("([\u0e00-\u0e7f]+)")
 
-# ใช้ Badge แบบ Text ที่เสถียร 100%
-HITS_BADGE_URL = "https://img.shields.io/badge/Visitors-Live-green"
-
 def q(tag): return f"{{{W_NS}}}{tag}"
 
 # --- 3. Core Logic Functions ---
 def fix_thai_text(text):
     if not THAI_RE.search(text): return text
-    parts = MIXEDRE.split(text)
+    parts = MIXED_RE.split(text)
     out = []
     for part in parts:
         if part and all('\u0e00' <= ch <= '\u0e7f' for ch in part):
@@ -101,8 +98,8 @@ st.markdown("""
 # Sidebar Section
 with st.sidebar:
     st.write("📊 สถิติการใช้งาน")
-    st.image(HITS_BADGE_URL)
     st.markdown("ระบบออนไลน์พร้อมใช้งานตลอด 24 ชั่วโมง")
+    st.caption("พัฒนาเพื่อสาธารณประโยชน์")
 
 # Header Section with Credit
 st.title("📝 Thai Word Wrap & Font Fixer")
@@ -138,19 +135,15 @@ if uploaded_file is not None:
         except Exception as e:
             st.error(f"เกิดข้อผิดพลาด: {e}")
 
-
-
 # Disclaimer Section
 st.divider()
-st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไฟล์ที่แก้ไขแล้วจะถูกสร้างขึ้นมาให้โดยไม่มีผลกระทบกับไฟล์ต้นฉบับของท่าน  มีข้อสงสัยสอบถามได้ที่ joopiest@gmail.com")
+st.info("⚠️ **Disclaimer:** เครื่องมือนี้ให้บริการฟรีเพื่อสาธารณประโยชน์ ผู้พัฒนา (Joopiest Udomsaph) ไฟล์ที่แก้ไขแล้วจะถูกสร้างขึ้นมาใหม่โดยไม่มีผลกระทบกับไฟล์ต้นฉบับของท่าน  มีข้อสงสัยสอบถามได้ที่ joopiest@gmail.com")
 
-# Footer
-# ดึงปีปัจจุบันมาเก็บไว้ในตัวแปร current_year
+# Footer ดึงปีปัจจุบันมาเก็บไว้ในตัวแปร current_year
 current_year = datetime.date.today().year
 
 # แก้ไขข้อความ Footer ให้ใช้ตัวแปร current_year
 st.markdown(f"<div class='footer'>© {current_year} Thai Word Wrap & Font Fixer | พัฒนาด้วย ❤️ เพื่อชุมชนคนทำงาน </div>", unsafe_allow_html=True)
-
 
 ### วิธีการดูสถิติแบบละเอียด (Daily, Monthly, Yearly):
 # นอกเหนือจากตัวเลขบนหน้าเว็บ คุณจู๊ปสามารถเข้าไปดูสถิติเชิงลึกได้ที่หน้าจัดการของ Streamlit ครับ:
