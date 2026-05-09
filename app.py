@@ -1,10 +1,12 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
+# --- ตั้งค่าหน้าจอ Streamlit ---
 st.set_page_config(page_title="True Real-time Translator", layout="wide")
 st.title("⚡ True Real-time Translator")
 st.markdown("ระบบแปลภาษาด่วนแบบ Real-time พัฒนาโดยใช้เทคโนโลยี Web Speech API และ JavaScript")
 
+# --- โค้ด HTML, CSS, JavaScript ทั้งหมด ---
 custom_html = """
 <!DOCTYPE html>
 <html>
@@ -17,6 +19,7 @@ custom_html = """
   }
   .container { padding: 10px; }
   
+  /* --- กล่องควบคุมด้านบน --- */
   .controls-container {
       display: flex;
       gap: 20px;
@@ -55,17 +58,27 @@ custom_html = """
   #startBtn { background-color: #ff4b4b; color: white; margin-right: 10px; }
   #stopBtn { background-color: #444; color: white; }
 
+  /* --- เลย์เอาต์กล่องแสดงผล --- */
   .output-container { display: flex; gap: 20px; }
   
-  /* --- ส่วนที่อัปเดต: ล็อกความสูงและใส่ Scrollbar --- */
+  /* 
+   * 🛠️ แก้ปัญหา Scrollbar หายบน Streamlit Cloud 
+   * บังคับความสูงสูงสุด (max-height) และให้นับรวมขอบ (box-sizing)
+   */
   .box { 
-    flex: 1; padding: 20px; border-radius: 8px; 
-    background: #1e2127; border: 1px solid #333; 
-    height: 300px;         /* ล็อกความสูงกล่องไว้ที่ 300px */
-    overflow-y: auto;      /* ให้มี Scrollbar แนวตั้งเมื่อข้อความล้น */
+    flex: 1; 
+    padding: 20px; 
+    border-radius: 8px; 
+    background: #1e2127; 
+    border: 1px solid #333; 
+    
+    height: 300px;
+    max-height: 300px;
+    overflow-y: auto !important; 
+    box-sizing: border-box;
   }
   
-  /* ปรับแต่งหน้าตา Scrollbar ให้ดูโมเดิร์นเข้ากับเว็บ Dark Mode */
+  /* ปรับแต่งหน้าตา Scrollbar ให้สวยงาม (Dark Mode) */
   .box::-webkit-scrollbar { width: 8px; }
   .box::-webkit-scrollbar-track { background: #1e2127; border-radius: 8px; }
   .box::-webkit-scrollbar-thumb { background: #555; border-radius: 8px; }
@@ -105,11 +118,12 @@ custom_html = """
   </div>
 
   <div class="output-container">
-    <!-- เพิ่ม ID ให้กล่อง เพื่อให้ JavaScript สั่งเลื่อน Scrollbar ได้ -->
+    <!-- กล่องซ้าย (ต้นฉบับ) -->
     <div class="box" id="boxOrig">
       <div id="origTitle" class="title">🇹🇭 ต้นฉบับ (กำลังพูด):</div>
       <div id="original" class="text"><span class="placeholder">[รอรับเสียง...]</span></div>
     </div>
+    <!-- กล่องขวา (คำแปล) -->
     <div class="box" id="boxTrans">
       <div id="transTitle" class="title">🇬🇧 คำแปล (Real-time):</div>
       <div id="translated" class="text"><span class="placeholder">[รอการแปล...]</span></div>
@@ -127,24 +141,26 @@ custom_html = """
   let clearDelayMs = 10000; 
   let clearTimer;           
   let inactivityTimer;      
-  const IDLE_TIMEOUT_MS = 5 * 60 * 1000; 
+  const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 นาที
   
   let sttLang = "th-TH";    
   let srcLang = "th";       
   let destLang = "en";      
 
-  // ฟังก์ชันเลื่อน Scrollbar ลงล่างสุดอัตโนมัติ
+  // --- ฟังก์ชันเลื่อน Scrollbar ลงล่างสุดอัตโนมัติ ---
   function scrollToBottom(elementId) {
       let box = document.getElementById(elementId);
       box.scrollTop = box.scrollHeight;
   }
 
+  // --- ฟังก์ชันอัปเดตเวลาหน่วงจาก Slider ---
   function updateDelay() {
       let val = document.getElementById('delaySlider').value;
       document.getElementById('delayValue').innerText = val;
       clearDelayMs = parseInt(val) * 1000;
   }
 
+  // --- ฟังก์ชันรีเซ็ตเวลาล้างหน้าจอ ---
   function resetClearTimer() {
       clearTimeout(clearTimer);
       clearTimer = setTimeout(() => {
@@ -159,6 +175,7 @@ custom_html = """
       }, clearDelayMs);
   }
 
+  // --- ฟังก์ชันตัดไมค์เมื่อเงียบเกิน 5 นาที ---
   function resetInactivityTimer() {
     clearTimeout(inactivityTimer); 
     if (isRecognizing) {
@@ -170,6 +187,7 @@ custom_html = """
     }
   }
 
+  // --- การตั้งค่า Web Speech API ---
   if (window.hasOwnProperty('webkitSpeechRecognition')) {
     recognition = new webkitSpeechRecognition();
     recognition.continuous = true;       
@@ -220,7 +238,7 @@ custom_html = """
       document.getElementById('original').innerHTML = 
         globalFinalTranscript + '<span class="interim">' + interim_transcript + '</span>';
 
-      // เลื่อนกล่องต้นฉบับลงล่างสุด
+      // 🎯 สั่งเลื่อนกล่องต้นฉบับลงล่างสุด
       scrollToBottom('boxOrig');
 
       if (currentText.trim() !== "") {
@@ -264,6 +282,7 @@ custom_html = """
     }
   }
 
+  // --- ยิง API ไปที่ Google Translate ---
   function translateText(text, src, dest) {
     let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src}&tl=${dest}&dt=t&q=${encodeURI(text)}`;
     fetch(url)
@@ -275,7 +294,7 @@ custom_html = """
         }
         document.getElementById('translated').innerHTML = translated_text;
         
-        // เลื่อนกล่องคำแปลลงล่างสุดหลังจากแปลเสร็จ
+        // 🎯 สั่งเลื่อนกล่องคำแปลลงล่างสุดหลังจากแปลเสร็จ
         scrollToBottom('boxTrans');
       });
   }
@@ -284,8 +303,9 @@ custom_html = """
 </html>
 """
 
-# เพิ่มความสูงของกล่อง Iframe เป็น 550 ให้มีพื้นที่รองรับ Scrollbar พอดี
-components.html(custom_html, height=550)
+# 🛠️ ปรับความสูง Iframe เป็น 650 เผื่อพื้นที่ให้ Scrollbar โชว์ได้เต็มที่โดยไม่โดนตัดแหว่ง
+components.html(custom_html, height=650)
 
+# --- Credit Footer ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; color: #a3a8b8; font-size: 14px;'>Developed by <b>Joopiest Udomsaph</b></p>", unsafe_allow_html=True)
