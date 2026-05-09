@@ -1,12 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- ตั้งค่าหน้าจอ Streamlit ---
 st.set_page_config(page_title="True Real-time Translator", layout="wide")
 st.title("⚡ True Real-time Translator")
 st.markdown("ระบบแปลภาษาด่วนแบบ Real-time พัฒนาโดยใช้เทคโนโลยี Web Speech API และ JavaScript")
 
-# --- โค้ด HTML, CSS, JavaScript ทั้งหมด ---
 custom_html = """
 <!DOCTYPE html>
 <html>
@@ -19,30 +17,15 @@ custom_html = """
   }
   .container { padding: 10px; }
   
-  /* --- กล่องควบคุมด้านบน --- */
   .controls-container {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 25px;
+      display: flex; gap: 20px; margin-bottom: 25px;
   }
   .control-box {
-      flex: 1;
-      background: #1e2127;
-      padding: 15px 20px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      flex: 1; background: #1e2127; padding: 15px 20px;
+      border-radius: 8px; border: 1px solid #333;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .control-title {
-      font-size: 14px;
-      color: #a3a8b8;
-      margin-bottom: 12px;
-      font-weight: bold;
-  }
-  
+  .control-title { font-size: 14px; color: #a3a8b8; margin-bottom: 12px; font-weight: bold; }
   .lang-selector { display: flex; gap: 25px; }
   .lang-selector label { font-size: 16px; cursor: pointer; color: #e6eaf1; }
   
@@ -58,33 +41,40 @@ custom_html = """
   #startBtn { background-color: #ff4b4b; color: white; margin-right: 10px; }
   #stopBtn { background-color: #444; color: white; }
 
-  /* --- เลย์เอาต์กล่องแสดงผล --- */
+  /* --- ท่าไม้ตาย แก้ปัญหา Scrollbar แบบชัวร์ 100% --- */
   .output-container { display: flex; gap: 20px; }
   
-  /* 
-   * 🛠️ แก้ปัญหา Scrollbar หายบน Streamlit Cloud 
-   * บังคับความสูงสูงสุด (max-height) และให้นับรวมขอบ (box-sizing)
-   */
   .box { 
     flex: 1; 
     padding: 20px; 
     border-radius: 8px; 
     background: #1e2127; 
     border: 1px solid #333; 
-    
-    height: 300px;
-    max-height: 300px;
-    overflow-y: auto !important; 
+    display: flex;             /* สั่งให้กล่องเป็น Flex */
+    flex-direction: column;    /* เรียงเนื้อหาจากบนลงล่าง */
+    height: 350px;             /* ล็อกความสูงกล่องหลักแบบตายตัว */
     box-sizing: border-box;
   }
   
-  /* ปรับแต่งหน้าตา Scrollbar ให้สวยงาม (Dark Mode) */
-  .box::-webkit-scrollbar { width: 8px; }
-  .box::-webkit-scrollbar-track { background: #1e2127; border-radius: 8px; }
-  .box::-webkit-scrollbar-thumb { background: #555; border-radius: 8px; }
-  .box::-webkit-scrollbar-thumb:hover { background: #777; }
+  .title { 
+    font-weight: bold; color: #a3a8b8; margin-bottom: 15px; 
+    font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px;
+    flex-shrink: 0; /* ป้องกันไม่ให้หัวข้อโดนบีบ */
+  }
   
-  .title { font-weight: bold; color: #a3a8b8; margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 10px;}
+  /* สร้างโซนเฉพาะสำหรับเลื่อนข้อความ (Scroll Area) */
+  .scroll-area {
+    flex: 1;                   /* ให้โซนนี้กินพื้นที่ที่เหลือทั้งหมดในกล่อง */
+    overflow-y: scroll;        /* บังคับให้แสดง Scrollbar แนวตั้งไว้เลย */
+    padding-right: 10px;       /* เว้นที่ให้ Scrollbar นิดหน่อย */
+  }
+
+  /* ตกแต่ง Scrollbar ให้สวยงาม */
+  .scroll-area::-webkit-scrollbar { width: 8px; }
+  .scroll-area::-webkit-scrollbar-track { background: #1e2127; border-radius: 8px; }
+  .scroll-area::-webkit-scrollbar-thumb { background: #555; border-radius: 8px; }
+  .scroll-area::-webkit-scrollbar-thumb:hover { background: #777; }
+
   .text { font-size: 22px; color: #e6eaf1; line-height: 1.6; }
   .interim { color: #ff4b4b; } 
   .placeholder { color: #555; font-size: 18px; font-style: italic; }
@@ -118,15 +108,22 @@ custom_html = """
   </div>
 
   <div class="output-container">
-    <!-- กล่องซ้าย (ต้นฉบับ) -->
-    <div class="box" id="boxOrig">
+    <!-- กล่องซ้าย -->
+    <div class="box">
       <div id="origTitle" class="title">🇹🇭 ต้นฉบับ (กำลังพูด):</div>
-      <div id="original" class="text"><span class="placeholder">[รอรับเสียง...]</span></div>
+      <!-- โซน Scroll แยกออกมาต่างหาก -->
+      <div class="scroll-area" id="scrollOrig">
+        <div id="original" class="text"><span class="placeholder">[รอรับเสียง...]</span></div>
+      </div>
     </div>
-    <!-- กล่องขวา (คำแปล) -->
-    <div class="box" id="boxTrans">
+    
+    <!-- กล่องขวา -->
+    <div class="box">
       <div id="transTitle" class="title">🇬🇧 คำแปล (Real-time):</div>
-      <div id="translated" class="text"><span class="placeholder">[รอการแปล...]</span></div>
+      <!-- โซน Scroll แยกออกมาต่างหาก -->
+      <div class="scroll-area" id="scrollTrans">
+        <div id="translated" class="text"><span class="placeholder">[รอการแปล...]</span></div>
+      </div>
     </div>
   </div>
 </div>
@@ -141,26 +138,24 @@ custom_html = """
   let clearDelayMs = 10000; 
   let clearTimer;           
   let inactivityTimer;      
-  const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 นาที
+  const IDLE_TIMEOUT_MS = 5 * 60 * 1000; 
   
   let sttLang = "th-TH";    
   let srcLang = "th";       
   let destLang = "en";      
 
-  // --- ฟังก์ชันเลื่อน Scrollbar ลงล่างสุดอัตโนมัติ ---
+  // สั่งเลื่อน Scrollbar ของโซนเนื้อหาลงล่างสุด
   function scrollToBottom(elementId) {
-      let box = document.getElementById(elementId);
-      box.scrollTop = box.scrollHeight;
+      let scrollBox = document.getElementById(elementId);
+      scrollBox.scrollTop = scrollBox.scrollHeight;
   }
 
-  // --- ฟังก์ชันอัปเดตเวลาหน่วงจาก Slider ---
   function updateDelay() {
       let val = document.getElementById('delaySlider').value;
       document.getElementById('delayValue').innerText = val;
       clearDelayMs = parseInt(val) * 1000;
   }
 
-  // --- ฟังก์ชันรีเซ็ตเวลาล้างหน้าจอ ---
   function resetClearTimer() {
       clearTimeout(clearTimer);
       clearTimer = setTimeout(() => {
@@ -175,7 +170,6 @@ custom_html = """
       }, clearDelayMs);
   }
 
-  // --- ฟังก์ชันตัดไมค์เมื่อเงียบเกิน 5 นาที ---
   function resetInactivityTimer() {
     clearTimeout(inactivityTimer); 
     if (isRecognizing) {
@@ -187,7 +181,6 @@ custom_html = """
     }
   }
 
-  // --- การตั้งค่า Web Speech API ---
   if (window.hasOwnProperty('webkitSpeechRecognition')) {
     recognition = new webkitSpeechRecognition();
     recognition.continuous = true;       
@@ -238,8 +231,8 @@ custom_html = """
       document.getElementById('original').innerHTML = 
         globalFinalTranscript + '<span class="interim">' + interim_transcript + '</span>';
 
-      // 🎯 สั่งเลื่อนกล่องต้นฉบับลงล่างสุด
-      scrollToBottom('boxOrig');
+      // เลื่อน Scroll กล่องซ้าย
+      scrollToBottom('scrollOrig');
 
       if (currentText.trim() !== "") {
         translateText(currentText, srcLang, destLang);
@@ -282,7 +275,6 @@ custom_html = """
     }
   }
 
-  // --- ยิง API ไปที่ Google Translate ---
   function translateText(text, src, dest) {
     let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${src}&tl=${dest}&dt=t&q=${encodeURI(text)}`;
     fetch(url)
@@ -294,8 +286,8 @@ custom_html = """
         }
         document.getElementById('translated').innerHTML = translated_text;
         
-        // 🎯 สั่งเลื่อนกล่องคำแปลลงล่างสุดหลังจากแปลเสร็จ
-        scrollToBottom('boxTrans');
+        // เลื่อน Scroll กล่องขวา
+        scrollToBottom('scrollTrans');
       });
   }
 </script>
@@ -303,9 +295,7 @@ custom_html = """
 </html>
 """
 
-# 🛠️ ปรับความสูง Iframe เป็น 650 เผื่อพื้นที่ให้ Scrollbar โชว์ได้เต็มที่โดยไม่โดนตัดแหว่ง
 components.html(custom_html, height=650)
 
-# --- Credit Footer ---
 st.markdown("---")
 st.markdown("<p style='text-align: center; color: #a3a8b8; font-size: 14px;'>Developed by <b>Joopiest Udomsaph</b></p>", unsafe_allow_html=True)
